@@ -11,6 +11,12 @@ module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
     redisUrl: process.env.REDIS_URL,
+    databaseDriverOptions: {
+      ssl: { rejectUnauthorized: false }, // For the main app
+      extra: {
+        ssl: { rejectUnauthorized: false }, // For the underlying pool
+      },
+    },
     http: {
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
@@ -21,6 +27,19 @@ module.exports = defineConfig({
         user: ["emailpass"],
         customer: ["emailpass", "phone-auth"],
       },
+    },
+  },
+  admin: {
+    vite: (config) => {
+      return {
+        ...config,
+        server: {
+          allowedHosts: [
+            ".ondigitalocean.app", // Allows all DO subdomains
+            ".kiddo-iq.store",
+          ],
+        },
+      };
     },
   },
   plugins: [
@@ -50,18 +69,18 @@ module.exports = defineConfig({
       resolve: "@medusajs/medusa/cache-redis",
       options: {
         redisUrl: process.env.REDIS_URL,
-        // redisOptions: {
-        //   tls: { rejectUnauthorized: false },
-        // },
+        redisOptions: {
+          tls: { rejectUnauthorized: false },
+        },
       },
     },
     {
       resolve: "@medusajs/medusa/event-bus-redis",
       options: {
         redisUrl: process.env.REDIS_URL,
-        // redisOptions: {
-        //   tls: { rejectUnauthorized: false },
-        // },
+        redisOptions: {
+          tls: { rejectUnauthorized: false },
+        },
       },
     },
     {
