@@ -9,10 +9,8 @@ import {
   releaseLockStep,
   useQueryGraphStep,
 } from "@medusajs/medusa/core-flows";
-import {
-  CreateVariantsInStrapiInput,
-  createVariantsInStrapiStep,
-} from "./steps/create-variants-in-strapi";
+import { CreateVariantsInStrapiInput } from "./steps/create-variants-in-strapi";
+import { createVariantsInStrapiStep } from "./steps/create-variants-in-strapi";
 import { uploadImagesToStrapiStep } from "./steps/upload-images-to-strapi";
 import { updateProductVariantsMetadataStep } from "./steps/update-product-variants-metadata";
 
