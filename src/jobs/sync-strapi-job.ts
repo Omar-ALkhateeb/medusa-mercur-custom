@@ -78,5 +78,5 @@ export const config = {
   name: "daily-strapi-sync",
   // Standard cron syntax. "0 2 * * *" means "Run every day at 2:00 AM"
   // You can change this to "*/5 * * * *" to run every 5 minutes while testing
-  schedule: "0 2 * * *",
+  schedule: "0 * * * *",
 };
