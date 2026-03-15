@@ -52,7 +52,8 @@ export const createVariantsInStrapiWorkflow = createWorkflow(
 
     const strapiVariants = when(
       { variants },
-      (data) => !!(data.variants[0].product as any)?.strapi_product,
+      // 🟢 THE FIX: Check the metadata for the Strapi ID instead
+      (data) => !!data.variants[0].product?.metadata?.strapi_id,
     ).then(() => {
       const variantImages = transform(
         {
