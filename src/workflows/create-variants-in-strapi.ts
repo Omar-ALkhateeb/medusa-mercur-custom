@@ -38,7 +38,6 @@ export const createVariantsInStrapiWorkflow = createWorkflow(
         "product.options.values.id",
         "product.options.values.value",
         "product.options.values.metadata",
-        "product.strapi_product.*",
         "images.*",
         "thumbnail",
         "options.*",
