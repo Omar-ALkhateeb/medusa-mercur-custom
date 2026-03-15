@@ -17,6 +17,7 @@ import {
 } from "@medusajs/medusa/core-flows";
 import { createOptionsInStrapiWorkflow } from "./create-options-in-strapi";
 import { createVariantsInStrapiWorkflow } from "./create-variants-in-strapi";
+import { updateProductMetadataStep } from "./steps/update-product-metadata";
 
 export type CreateProductInStrapiWorkflowInput = {
   id: string;
@@ -99,19 +100,13 @@ export const createProductInStrapiWorkflow = createWorkflow(
 
     const productMetadataUpdate = transform({ strapiProduct }, (data) => {
       return {
-        selector: { id: data.strapiProduct.medusaId },
-        update: {
-          metadata: {
-            strapi_id: data.strapiProduct.id,
-            strapi_document_id: data.strapiProduct.documentId,
-          },
-        },
+        id: data.strapiProduct.medusaId, // Match the 'id' field in our step
+        strapi_id: data.strapiProduct.id,
+        strapi_document_id: data.strapiProduct.documentId,
       };
     });
 
-    updateProductsWorkflow.runAsStep({
-      input: productMetadataUpdate,
-    });
+    updateProductMetadataStep(productMetadataUpdate);
 
     const variantIds = transform(
       {
