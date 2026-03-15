@@ -68,6 +68,15 @@ export default async function syncAllToStrapiJob(container: MedusaContainer) {
         console.log(`✅ Synced Product: ${product.title}`);
       } catch (e: any) {
         console.error(`❌ Failed Product ${product.title}:`, e.message);
+        console.log(`Failed Product: ${product.title}`);
+
+        // Print the full stack trace (File path and Line numbers)
+        console.error(e.stack || e);
+
+        // Print the exact step that blew up
+        if (e.transaction) {
+          console.log("\n❌ Failed Step:", e.transaction.getState());
+        }
       }
     }
   }
