@@ -60,25 +60,25 @@ export default async function syncAllToStrapiJob(container: MedusaContainer) {
   });
 
   for (const product of products) {
-    if (!product.metadata?.strapi_id) {
-      try {
-        await createProductInStrapiWorkflow(container).run({
-          input: { id: product.id },
-        });
-        console.log(`✅ Synced Product: ${product.title}`);
-      } catch (e: any) {
-        console.error(`❌ Failed Product ${product.title}:`, e.message);
-        console.log(`Failed Product: ${product.title}`);
+    // if (!product.metadata?.strapi_id) {
+    try {
+      await createProductInStrapiWorkflow(container).run({
+        input: { id: product.id },
+      });
+      console.log(`✅ Synced Product: ${product.title}`);
+    } catch (e: any) {
+      console.error(`❌ Failed Product ${product.title}:`, e.message);
+      console.log(`Failed Product: ${product.title}`);
 
-        // Print the full stack trace (File path and Line numbers)
-        console.error(e.stack || e);
+      // Print the full stack trace (File path and Line numbers)
+      console.error(e.stack || e);
 
-        // Print the exact step that blew up
-        if (e.transaction) {
-          console.log("\n❌ Failed Step:", e.transaction.getState());
-        }
+      // Print the exact step that blew up
+      if (e.transaction) {
+        console.log("\n❌ Failed Step:", e.transaction.getState());
       }
     }
+    // }
   }
 }
 
