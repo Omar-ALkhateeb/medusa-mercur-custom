@@ -98,10 +98,10 @@ export const createVariantsInStrapiWorkflow = createWorkflow(
           title: variant.title,
           sku: variant.sku,
           strapiProductId: Number(variant.product?.metadata?.strapi_id),
-          strapiVariantImages: data.strapiVariantImages
+          imageIds: data.strapiVariantImages
             .filter((image) => image.entity_id === variant.id)
             .map((image) => image.image_id),
-          strapiVariantThumbnail: data.strapiVariantThumbnail.find(
+          thumbnailId: data.strapiVariantThumbnail.find(
             (image) => image.entity_id === variant.id,
           )?.image_id,
           optionValueIds: variant.options.flatMap((option) => {
