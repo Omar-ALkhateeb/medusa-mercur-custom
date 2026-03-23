@@ -26,7 +26,8 @@ export default async function seedMockData({ container }: ExecArgs) {
   const shopData = JSON.parse(rawData);
   const collections = shopData.data.collections.edges;
 
-  const productsToCreate = [];
+  // FIX: Explicitly tell TypeScript this array can hold our custom product objects
+  const productsToCreate: any[] = [];
 
   // 2. Format the data for the Workflow
   for (const col of collections) {

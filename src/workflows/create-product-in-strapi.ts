@@ -11,6 +11,7 @@ import {
 import { uploadImagesToStrapiStep } from "./steps/upload-images-to-strapi";
 import {
   useQueryGraphStep,
+  updateProductsWorkflow,
   acquireLockStep,
   releaseLockStep,
 } from "@medusajs/medusa/core-flows";
