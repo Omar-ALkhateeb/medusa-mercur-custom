@@ -4,11 +4,10 @@ import fs from "fs";
 
 export default async function seedMockData({ container }: ExecArgs) {
   const logger = container.resolve("logger");
-  const query = container.resolve("query"); // The v2 Graph Query engine
+  const query = container.resolve("query");
 
   logger.info("🔍 Fetching default sales channel...");
 
-  // 1. Get your default Sales Channel so the Expo app can actually see the products
   const { data: salesChannels } = await query.graph({
     entity: "sales_channel",
     fields: ["id"],
@@ -26,40 +25,39 @@ export default async function seedMockData({ container }: ExecArgs) {
   const shopData = JSON.parse(rawData);
   const collections = shopData.data.collections.edges;
 
-  // FIX: Explicitly tell TypeScript this array can hold our custom product objects
   const productsToCreate: any[] = [];
 
-  // 2. Format the data for the Workflow
   for (const col of collections) {
     const collectionNode = col.node;
 
     for (const prod of collectionNode.products.edges) {
       const pNode = prod.node;
 
-      // Convert Shopify's decimal price (e.g. "45.0") to Medusa's cents (4500)
       const priceVal =
         parseFloat(pNode.variants.edges[0].node.price.amount) * 100;
 
+      // FIX: Generate a guaranteed unique URL handle so Medusa doesn't crash on duplicates
+      const safeSlug = pNode.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const randomString = Math.random().toString(36).substring(2, 7);
+      const uniqueHandle = `${safeSlug}-${randomString}`;
+
       productsToCreate.push({
         title: pNode.title,
+        handle: uniqueHandle, // Injecting the unique handle here
         description: pNode.description,
         thumbnail: pNode.featuredImage.url,
         images: [{ url: pNode.featuredImage.url }],
 
-        // Ensure the product is attached to your store
         sales_channels: defaultSalesChannelId
           ? [{ id: defaultSalesChannelId }]
           : [],
 
-        // Create a default option (e.g., Size)
         options: [{ title: "Size" }],
 
         variants: [
           {
             title: "Standard Size",
-            options: { Size: "Standard" }, // Matches the option above
-
-            // Set the default price
+            options: { Size: "Standard" },
             prices: [
               {
                 currency_code: "eur",
@@ -70,10 +68,6 @@ export default async function seedMockData({ container }: ExecArgs) {
                 amount: priceVal,
               },
             ],
-
-            // DEFAULT INVENTORY SETTING
-            // Setting this to false tells Medusa to assume infinite stock.
-            // This prevents your demo app from ever saying "Out of Stock".
             manage_inventory: false,
           },
         ],
@@ -85,7 +79,6 @@ export default async function seedMockData({ container }: ExecArgs) {
     `🚀 Inserting ${productsToCreate.length} products via Workflow...`,
   );
 
-  // 3. Execute the native v2 Workflow to safely create everything across all modules
   await createProductsWorkflow(container).run({
     input: {
       products: productsToCreate,
