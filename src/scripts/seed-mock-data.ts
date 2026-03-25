@@ -52,7 +52,7 @@ export default async function seedMockData({ container }: ExecArgs) {
           ? [{ id: defaultSalesChannelId }]
           : [],
 
-        options: [{ title: "Size" }],
+        options: [{ title: "Size", values: ["Standard"] }],
 
         variants: [
           {
